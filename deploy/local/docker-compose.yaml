@@ -33,9 +33,9 @@ services:
       - RUST_LOG=info
       - DATABASE_URL=postgres://feeds_user:${DB_PASS}@db:5432/el_monitorro
       - BOT_BINARY=commands
-      - SYNC_INTERVAL_SECONDS=120
+      - SYNC_INTERVAL_SECONDS=300
       - SYNC_WORKERS_NUMBER=1
-      - DELIVER_INTERVAL_SECONDS=60
+      - DELIVER_INTERVAL_SECONDS=180
       - DELIVER_WORKERS_NUMBER=1
       - CLEAN_INTERVAL_SECONDS=43200
       - ALL_BINARIES=true
