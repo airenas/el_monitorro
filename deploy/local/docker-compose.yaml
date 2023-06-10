@@ -1,0 +1,58 @@
+version: '3.8'
+
+networks:
+  el_monitorro:
+
+x-logging:
+  &default-logging
+  options:
+    max-size: '20m'
+    max-file: '3'
+  driver: json-file  
+
+services:
+  
+  db:
+    image: postgres:15.1-alpine3.16
+    volumes:
+    - ./.data/db:/var/lib/postgresql/data:rw
+    - ./init/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_INITDB_ARGS=--auth=password
+    restart: unless-stopped  
+    logging: *default-logging
+    networks:
+      - el_monitorro
+
+  bot:
+    image: ayratbadykov/el_monitorro:${BOT_VERSION}
+    environment:
+      - DATABASE_POOL_SIZE=5
+      - RUST_BACKTRACE=1
+      - RUST_LOG=info
+      - DATABASE_URL=postgres://feeds_user:${DB_PASS}@db:5432/el_monitorro
+      - BOT_BINARY=commands
+      - SYNC_INTERVAL_SECONDS=120
+      - SYNC_WORKERS_NUMBER=1
+      - DELIVER_INTERVAL_SECONDS=60
+      - DELIVER_WORKERS_NUMBER=1
+      - CLEAN_INTERVAL_SECONDS=43200
+      - ALL_BINARIES=true
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    restart: unless-stopped
+    logging: *default-logging
+    networks:
+      - el_monitorro
+
+  bot-db:
+    image: ayratbadykov/el_monitorro:${BOT_VERSION}
+    environment:
+      - DATABASE_URL=postgres://feeds_user:${DB_PASS}@db:5432/el_monitorro
+      - RUN_MIGRATION=true
+      - SETUP_DB=true
+      - BOT_BINARY=none
+    restart: no
+    logging: *default-logging
+    networks:
+      - el_monitorro    

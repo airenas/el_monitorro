@@ -1,0 +1,4 @@
+CREATE DATABASE el_monitorro;
+CREATE USER feeds_user WITH ENCRYPTED PASSWORD '${DB_PASS}';
+GRANT ALL PRIVILEGES ON DATABASE el_monitorro TO feeds_user;
+ALTER DATABASE el_monitorro OWNER TO feeds_user;
