@@ -15,7 +15,7 @@ services:
   db:
     image: postgres:15.1-alpine3.16
     volumes:
-    - ./.data/db:/var/lib/postgresql/data:rw
+    - el_monitorro_data:/var/lib/postgresql/data:rw
     - ./init/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     environment:
       - POSTGRES_PASSWORD=${DB_PASS}
@@ -55,4 +55,7 @@ services:
     restart: no
     logging: *default-logging
     networks:
-      - el_monitorro    
+      - el_monitorro   
+
+volumes:
+  el_monitorro_data:
